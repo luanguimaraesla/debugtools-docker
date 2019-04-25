@@ -1,0 +1,10 @@
+version: "3"
+services:
+  debugtools:
+    build: .
+    container_name: debugtools
+    image: luanguimaraesla/debugtools:latest
+    ports:
+     - "5000:5000"
+    volumes:
+     - ./server:/go/src/github.com/luanguimaraesla/debugtools/server
