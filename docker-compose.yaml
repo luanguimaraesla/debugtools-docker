@@ -7,4 +7,4 @@ services:
     ports:
      - "5000:5000"
     volumes:
-     - ./server:/go/src/github.com/luanguimaraesla/debugtools/server
+     - ./server:/server

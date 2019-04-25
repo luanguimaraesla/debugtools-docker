@@ -12,6 +12,7 @@ RUN apt update -y && apt install -y \
     dnsutils \
     ruby \
     ruby-dev \
+    gcc \
     netcat && \
     rm -rf /var/lib/apt/lists/*
 
@@ -38,6 +39,7 @@ ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 RUN go get -u github.com/tsenart/vegeta
 
 # Configure simple server
-ADD ./server /go/src/github.com/luanguimaraesla/debugtools/server
+ADD ./server /server
+WORKDIR /server
 
 CMD ["sleep", "infinity"]
