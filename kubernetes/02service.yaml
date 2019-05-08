@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: debugtools
-  namespace: debugtools
+  namespace: luan
 spec:
   ports:
   - name: http

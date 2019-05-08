@@ -4,7 +4,7 @@ metadata:
   annotations:
     io.cilium/global-service: "true"
   name: global-debugtools
-  namespace: debugtools
+  namespace: luan
 spec:
   ports:
   - name: http

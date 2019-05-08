@@ -36,10 +36,16 @@ ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install vegeta
-RUN go get -u github.com/tsenart/vegeta
+RUN go get -u github.com/tsenart/vegeta && \
+    go get -u github.com/rs/jplot
 
 # Configure simple server
 ADD ./server /server
 WORKDIR /server
+RUN go build && go install
 
-CMD ["sleep", "infinity"]
+# Release warzone tools
+ADD ./warzone /warzone
+WORKDIR /warzone
+
+CMD ["server"]
