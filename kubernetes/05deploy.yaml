@@ -18,13 +18,27 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      annotations:
+        ad.datadoghq.com/debugtools.check_names: '["prometheus"]'
+        ad.datadoghq.com/debugtools.init_configs: '[{}]'
+        ad.datadoghq.com/debugtools.instances: |
+          [{
+            "prometheus_url": "http://%%host%%:5000/metrics",
+            "namespace": "debugtools",
+            "metrics": [
+              {"debugtools_errors": "debugtools_errors"},
+              {"debugtools_files_uploaded": "debugtools_files_uploaded"},
+              {"debugtools_requests": "debugtools_requests"}
+            ],
+            "exclude_labels": ["timestamp"]
+          }]
       labels:
         app: debugtools
     spec:
       containers:
       - image: luanguimaraesla/debugtools:latest
         imagePullPolicy: Always
-        name: ubuntu
+        name: debugtools
         resources:
           limits:
             cpu: 500m
