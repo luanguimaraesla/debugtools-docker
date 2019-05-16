@@ -4,6 +4,7 @@ FROM ubuntu:latest
 RUN apt update -y && apt install -y \
     curl \
     git \
+    tcpdump \
     inetutils-ping \
     iputils-tracepath \
     vim \
