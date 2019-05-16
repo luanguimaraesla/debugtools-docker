@@ -16,10 +16,13 @@ type Page struct {
 }
 
 var (
-	prom_requests = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "debugtools_requests",
-		Help: "The total number of request events",
-	})
+	prom_requests = promauto.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "debugtools_requests",
+			Help: "The total number of request events",
+		},
+		[]string{"route"},
+	)
 	prom_files = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "debugtools_files_uploaded",
 		Help: "The total number of files uploaded",
@@ -32,7 +35,7 @@ var (
 
 func monitor_route(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		prom_requests.Inc()
+		prom_requests.With(prometheus.Labels{"route": r.URL.Path}).Inc()
 		f(w, r)
 	}
 }
