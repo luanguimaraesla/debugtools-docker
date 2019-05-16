@@ -18,23 +18,32 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations:
-        ad.datadoghq.com/debugtools.check_names: '["prometheus"]'
-        ad.datadoghq.com/debugtools.init_configs: '[{}]'
-        ad.datadoghq.com/debugtools.instances: |
-          [{
-            "prometheus_url": "http://%%host%%:5000/metrics",
-            "namespace": "debugtools",
-            "metrics": [
-              {"debugtools_errors": "debugtools_errors"},
-              {"debugtools_files_uploaded": "debugtools_files_uploaded"},
-              {"debugtools_requests": "debugtools_requests"}
-            ],
-            "exclude_labels": ["timestamp"]
-          }]
+#      annotations:
+#        ad.datadoghq.com/debugtools.check_names: '["prometheus"]'
+#        ad.datadoghq.com/debugtools.init_configs: '[{}]'
+#        ad.datadoghq.com/debugtools.instances: |
+#          [{
+#            "prometheus_url": "http://%%host%%:5000/metrics",
+#            "namespace": "debugtools",
+#            "metrics": [
+#              {"debugtools_errors": "debugtools_errors"},
+#              {"debugtools_files_uploaded": "debugtools_files_uploaded"},
+#              {"debugtools_requests": "debugtools_requests"}
+#            ],
+#            "exclude_labels": ["timestamp"]
+#          }]
       labels:
         app: debugtools
     spec:
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: test-dedicated
+#                operator: In
+#                values:
+#                - "true"
       containers:
       - image: luanguimaraesla/debugtools:latest
         imagePullPolicy: Always
@@ -55,3 +64,8 @@ spec:
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+#      tolerations:
+#      - effect: NoSchedule
+#        key: dedicated
+#        operator: Equal
+#        value: test

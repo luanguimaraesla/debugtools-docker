@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: debugtools
   namespace: luan
+  labels:
+    app: debugtools
 spec:
   ports:
   - name: http
