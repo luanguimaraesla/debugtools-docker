@@ -14,6 +14,7 @@ RUN apt update -y && apt install -y \
     ruby \
     ruby-dev \
     gcc \
+    bpfcc-tools \
     netcat && \
     rm -rf /var/lib/apt/lists/*
 

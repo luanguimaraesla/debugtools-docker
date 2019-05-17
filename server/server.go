@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -21,7 +22,7 @@ var (
 			Name: "debugtools_requests",
 			Help: "The total number of request events",
 		},
-		[]string{"route"},
+		[]string{"header_host", "route", "client"},
 	)
 	prom_files = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "debugtools_files_uploaded",
@@ -35,7 +36,23 @@ var (
 
 func monitor_route(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		prom_requests.With(prometheus.Labels{"route": r.URL.Path}).Inc()
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			prom_errors.Inc()
+			return
+		}
+
+		userIP := net.ParseIP(ip)
+		if userIP == nil {
+			prom_errors.Inc()
+			return
+		}
+
+		prom_requests.With(prometheus.Labels{
+			"header_host": r.Host,
+			"route":       r.URL.Path,
+			"client":      userIP.String(),
+		}).Inc()
 		f(w, r)
 	}
 }

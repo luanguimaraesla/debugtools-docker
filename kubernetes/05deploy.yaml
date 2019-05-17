@@ -50,11 +50,11 @@ spec:
         name: debugtools
         resources:
           limits:
-            cpu: 500m
-            memory: 300Mi
-          requests:
-            cpu: 150m
+            cpu: 200m
             memory: 150Mi
+          requests:
+            cpu: 60m
+            memory: 100Mi
         securityContext:
           capabilities:
             add:
