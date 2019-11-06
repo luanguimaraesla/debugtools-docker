@@ -11,44 +11,45 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// Page is the webpage
 type Page struct {
 	Title string
 	Body  []byte
 }
 
 var (
-	prom_requests = promauto.NewCounterVec(
+	promRequests = promauto.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "debugtools_requests",
 			Help: "The total number of request events",
 		},
 		[]string{"header_host", "route", "client"},
 	)
-	prom_files = promauto.NewCounter(prometheus.CounterOpts{
+	promFiles = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "debugtools_files_uploaded",
 		Help: "The total number of files uploaded",
 	})
-	prom_errors = promauto.NewCounter(prometheus.CounterOpts{
+	promErrors = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "debugtools_errors",
 		Help: "The total number of errors",
 	})
 )
 
-func monitor_route(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func monitorRoute(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
-			prom_errors.Inc()
+			promErrors.Inc()
 			return
 		}
 
 		userIP := net.ParseIP(ip)
 		if userIP == nil {
-			prom_errors.Inc()
+			promErrors.Inc()
 			return
 		}
 
-		prom_requests.With(prometheus.Labels{
+		promRequests.With(prometheus.Labels{
 			"header_host": r.Host,
 			"route":       r.URL.Path,
 			"client":      userIP.String(),
@@ -78,7 +79,7 @@ func testGetHandler(w http.ResponseWriter, r *http.Request) {
 		title := r.URL.Path[len("/get/"):]
 		p, err := loadPage(title)
 		if err != nil {
-			prom_errors.Inc()
+			promErrors.Inc()
 			w.WriteHeader(404)
 			w.Write([]byte(`Not Found`))
 		} else {
@@ -108,7 +109,7 @@ func testPostHandler(w http.ResponseWriter, r *http.Request) {
 		title := r.URL.Path[len("/post/"):]
 		file, _, err := r.FormFile("file")
 		if err != nil {
-			prom_errors.Inc()
+			promErrors.Inc()
 			panic(err)
 		}
 		defer file.Close()
@@ -117,7 +118,7 @@ func testPostHandler(w http.ResponseWriter, r *http.Request) {
 		p := &Page{Title: title, Body: fileBytes}
 		p.save()
 
-		prom_files.Inc()
+		promFiles.Inc()
 		w.Write([]byte(`File uploaded.`))
 	default:
 		w.WriteHeader(405)
@@ -126,11 +127,11 @@ func testPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/health", monitor_route(healthHandler))
-	http.HandleFunc("/ping", monitor_route(pingHandler))
-	http.HandleFunc("/", monitor_route(homeHandler))
-	http.HandleFunc("/get/", monitor_route(testGetHandler))
-	http.HandleFunc("/post/", monitor_route(testPostHandler))
+	http.HandleFunc("/health", monitorRoute(healthHandler))
+	http.HandleFunc("/ping", monitorRoute(pingHandler))
+	http.HandleFunc("/", monitorRoute(homeHandler))
+	http.HandleFunc("/get/", monitorRoute(testGetHandler))
+	http.HandleFunc("/post/", monitorRoute(testPostHandler))
 	http.Handle("/metrics", promhttp.Handler())
 
 	log.Fatal(http.ListenAndServe(":5000", nil))

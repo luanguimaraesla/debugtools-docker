@@ -1,8 +1,11 @@
 FROM ubuntu:latest
 
+ENV DEBIAN_FRONTEND=noninteractive 
+
 # Install debug tools
 RUN apt update -y && apt install -y \
     curl \
+    wget \
     git \
     tcpdump \
     inetutils-ping \
@@ -15,8 +18,25 @@ RUN apt update -y && apt install -y \
     ruby-dev \
     gcc \
     bpfcc-tools \
-    netcat && \
+    netcat \
+    tmux \
+    postgresql \
+    postgresql-contrib \
+    libjemalloc1 \
+    libjemalloc-dev \
+    make \
+    iperf && \
     rm -rf /var/lib/apt/lists/*
+
+# Install redis-cli
+RUN cd /tmp && \
+    wget http://download.redis.io/redis-stable.tar.gz && \
+    tar xvzf redis-stable.tar.gz && \
+    cd redis-stable && \
+    make && \
+    cp src/redis-cli /usr/local/bin/ && \
+    cd && rm -rf /tmp/redis-stable* && \
+    chmod 755 /usr/local/bin/redis-cli
 
 # Install etcdctl
 RUN curl -L https://github.com/coreos/etcd/releases/download/v3.3.1/etcd-v3.3.1-linux-amd64.tar.gz -o etcd-v3.3.1-linux-amd64.tar.gz && \
@@ -28,9 +48,9 @@ RUN curl -L https://github.com/coreos/etcd/releases/download/v3.3.1/etcd-v3.3.1-
 ENV ETCDCTL_API=3
 
 # Install golang
-RUN curl -LO https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz && \
-    tar -xvf go1.12.2.linux-amd64.tar.gz && \
-    rm -rf go1.12.2.linux-amd64.tar.gz && \
+RUN curl -LO https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz && \
+    tar -xvf go1.13.1.linux-amd64.tar.gz && \
+    rm -rf go1.13.1.linux-amd64.tar.gz && \
     mv go /usr/local && \
     mkdir -p /go/src /go/bin /go/pkg
 ENV GOROOT=/usr/local/go
@@ -38,8 +58,7 @@ ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install vegeta
-RUN go get -u github.com/tsenart/vegeta && \
-    go get -u github.com/rs/jplot
+RUN go get -u github.com/tsenart/vegeta
 
 # Configure simple server
 ADD ./server /server

@@ -1,20 +1,20 @@
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus
-  name: debugtools
-  namespace: monitoring
-spec:
-  endpoints:
-  - honorLabels: true
-    interval: 30s
-    port: http
-    scrapeTimeout: 10s
-    path: /metrics
-  namespaceSelector:
-    matchNames:
-    - luan
-  selector:
-    matchLabels:
-      app: debugtools
+#apiVersion: monitoring.coreos.com/v1
+#kind: ServiceMonitor
+#metadata:
+#  labels:
+#    app: prometheus
+#  name: debugtools
+#  namespace: monitoring
+#spec:
+#  endpoints:
+#  - honorLabels: true
+#    interval: 30s
+#    port: http
+#    scrapeTimeout: 10s
+#    path: /metrics
+#  namespaceSelector:
+#    matchNames:
+#    - luan
+#  selector:
+#    matchLabels:
+#      app: debugtools

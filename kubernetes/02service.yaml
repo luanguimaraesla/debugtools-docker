@@ -5,6 +5,7 @@ metadata:
   namespace: luan
   labels:
     app: debugtools
+    lol: lol
 spec:
   ports:
   - name: http
