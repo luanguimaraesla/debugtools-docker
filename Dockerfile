@@ -22,6 +22,7 @@ RUN apt update -y && apt install -y \
     tmux \
     postgresql \
     postgresql-contrib \
+    mysql-client \
     libjemalloc1 \
     libjemalloc-dev \
     make \
