@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -64,6 +64,9 @@ spec:
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
 #      tolerations:
 #      - effect: NoSchedule
 #        key: dedicated
