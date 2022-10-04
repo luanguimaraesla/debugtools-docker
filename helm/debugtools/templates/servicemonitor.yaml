@@ -1,0 +1,21 @@
+{{- if .Values.serviceMonitor.create -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+   {{- include "debugtools.selectorLabels" . | nindent 4 }} 
+  name: {{ include "debugtools.fullname" . }} 
+spec:
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    port: http
+    scrapeTimeout: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "debugtools.selectorLabels" . | nindent 6 }}
+{{- end }}

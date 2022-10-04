@@ -92,7 +92,7 @@ func testGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`Hello, Luan! I'm vivão.`))
+	w.Write([]byte(`Ok`))
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +100,7 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`Hello, Luan! This is a test Page.`))
+	w.Write([]byte(`<p>Hello, dev! This is a test Page.</p>`))
 }
 
 func testPostHandler(w http.ResponseWriter, r *http.Request) {

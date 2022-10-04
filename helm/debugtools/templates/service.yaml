@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "debugtools.fullname" . }}
+  labels:
+    {{- include "debugtools.labels" . | nindent 4 }}
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    {{- include "debugtools.selectorLabels" . | nindent 4 }}
+  sessionAffinity: None
+  type: ClusterIP
