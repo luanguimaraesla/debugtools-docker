@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 2m
+  scrape_timeout: 1m
+  evaluation_interval: 2m
+
+scrape_configs:
+- job_name: "monitoring"
+  metrics_path: "/metrics"
+  static_configs:
+    - targets: ["localhost:5000"]
+  scheme: http
