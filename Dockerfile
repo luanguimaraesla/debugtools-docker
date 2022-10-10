@@ -23,10 +23,11 @@ RUN apt update -y && apt install -y \
     postgresql \
     postgresql-contrib \
     mysql-client \
-    libjemalloc1 \
     libjemalloc-dev \
     make \
-    iperf && \
+    iperf \
+    fio \
+    python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
 # Install redis-cli
@@ -58,8 +59,10 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-# Install vegeta
-RUN go get -u github.com/tsenart/vegeta
+# Install pip packages
+RUN pip3 install \
+	ipython \
+	fio-plot
 
 # Configure simple server
 ADD ./server /server

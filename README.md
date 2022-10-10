@@ -42,6 +42,8 @@ issues related to kubernetes networking layer:
 - etcdctl
 - golang
 - go-vegeta
+- fio
+- fio-plot
 
 ### Simple server endpoints
 
