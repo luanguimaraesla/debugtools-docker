@@ -47,14 +47,15 @@ issues related to kubernetes networking layer:
 
 ### Simple server endpoints
 
-| Endpoint            | Description                          |
-| ------------------- | ------------------------------------ |
-| `/`                 | A simple testing web page            |
-| `/health`           | Server's health                      |
-| `/ping`             | Returns `pong` if everything is okay |
-| `/post/<file-name>` | Creates a file on the server         |
-| `/get/<file-name>`  | Reads a file from the server         |
-| `/metrics`          | Metrics about the server             |
+| Endpoint            | Description                                |
+| ------------------- | ------------------------------------------ |
+| `/`                 | A simple testing web page                  |
+| `/health`           | Server's health                            |
+| `/ping`             | Returns `pong` if everything is okay       |
+| `/hang/<seconds>`   | Holds the request for the specified time   |
+| `/post/<file-name>` | Creates a file on the server               |
+| `/get/<file-name>`  | Reads a file from the server               |
+| `/metrics`          | Metrics about the server                   |
 
 ## Deploy on Kubernetes
 
@@ -79,4 +80,37 @@ helm upgrade \
 	--create-namespace \
 	debugtools \
 	./debugtools.values.yaml
+```
+
+## Run locally
+
+1. Build the image
+
+```
+docker build -t luanguimaraesla/debugtools:latest
+```
+
+2. Run the container with docker compose
+```
+docker compose up
+```
+
+3. Test the connection
+```
+curl localhost:5000/ping
+```
+
+## Deploy a new image do Docker Hub
+
+```
+# define the version
+VERSION=0.2.0
+
+# build the image
+docker build -t luanguimaraesla/debugtools:$VERSION
+docker tag luanguimaraesla/debugtools:$VERSION luanguimaraesla/debugtools:latest
+
+# release to docker hub
+docker push luanguimaraesla/debugtools:$VERSION
+docker push luanguimaraesla/debugtools:latest
 ```

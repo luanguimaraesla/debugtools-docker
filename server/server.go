@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -99,6 +102,30 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`pong`))
 }
 
+func hangHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		if len(r.URL.Path) <= len("/hang/") {
+			w.Write([]byte(`Bad request: the path should be /hang/{seconds}`))
+			return
+		}
+
+		secondsStr := r.URL.Path[len("/hang/"):]
+		seconds, err := strconv.Atoi(secondsStr)
+		if err != nil {
+			w.Write([]byte(`Bad request: in the request /hang/{seconds}, seconds should be an integer`))
+			return
+		}
+
+		time.Sleep(time.Duration(seconds) * time.Second)
+		w.Write([]byte(fmt.Sprintf("Released request after %d seconds.", seconds)))
+
+	default:
+		w.WriteHeader(405)
+		w.Write([]byte(`Allow: GET`))
+	}
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`<p>Hello, dev! This is a test Page.</p>`))
 }
@@ -127,12 +154,14 @@ func testPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	http.HandleFunc("/", monitorRoute(homeHandler))
 	http.HandleFunc("/health", monitorRoute(healthHandler))
 	http.HandleFunc("/ping", monitorRoute(pingHandler))
-	http.HandleFunc("/", monitorRoute(homeHandler))
+	http.HandleFunc("/hang/", monitorRoute(hangHandler))
 	http.HandleFunc("/get/", monitorRoute(testGetHandler))
 	http.HandleFunc("/post/", monitorRoute(testPostHandler))
 	http.Handle("/metrics", promhttp.Handler())
 
+	log.Printf("Listening to 0.0.0.0:5000")
 	log.Fatal(http.ListenAndServe(":5000", nil))
 }
