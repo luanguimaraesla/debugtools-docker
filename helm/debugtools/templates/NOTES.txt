@@ -22,4 +22,6 @@ Available tools:
 - redis-cli
 - etcdctl
 - golang
-- go-vegeta
+- fio
+- fio-plot
+- ipython
