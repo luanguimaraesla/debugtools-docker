@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ENV DEBIAN_FRONTEND=noninteractive 
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install debug tools
 RUN apt update -y && apt install -y \
@@ -17,6 +17,7 @@ RUN apt update -y && apt install -y \
     ruby \
     ruby-dev \
     gcc \
+    nano \
     bpfcc-tools \
     netcat \
     tmux \
@@ -50,9 +51,9 @@ RUN curl -L https://github.com/coreos/etcd/releases/download/v3.3.1/etcd-v3.3.1-
 ENV ETCDCTL_API=3
 
 # Install golang
-RUN curl -LO https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz && \
-    tar -xvf go1.13.1.linux-amd64.tar.gz && \
-    rm -rf go1.13.1.linux-amd64.tar.gz && \
+RUN curl -LO https://go.dev/dl/go1.24.2.linux-amd64.tar.gz && \
+    tar -xvf go1.24.2.linux-amd64.tar.gz && \
+    rm -rf go1.24.2.linux-amd64.tar.gz && \
     mv go /usr/local && \
     mkdir -p /go/src /go/bin /go/pkg
 ENV GOROOT=/usr/local/go
